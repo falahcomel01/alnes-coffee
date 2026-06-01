@@ -8,6 +8,8 @@ use App\Filament\Resources\Orders\Pages\CreateOrder;
 use App\Filament\Resources\Orders\Pages\EditOrder;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Models\Order;
+use App\Models\Payment;
+use App\Services\LoyaltyService;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
@@ -21,6 +23,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 
 class OrderResource extends Resource
@@ -82,6 +85,59 @@ class OrderResource extends Resource
                     ->default(),
             ])
             ->actions([
+                // ── Konfirmasi Pembayaran Cash ───────────────────
+                Action::make('confirm_payment')
+                    ->label('Konfirmasi Bayar')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('success')
+                    ->visible(fn ($record) =>
+                        $record->payment_method->value === 'cash' &&
+                        $record->payment_status->value === 'unpaid'
+                    )
+                    ->requiresConfirmation()
+                    ->modalHeading('Konfirmasi Pembayaran Cash')
+                    ->modalDescription(fn ($record) => "Konfirmasi pembayaran cash sebesar Rp " . number_format($record->grand_total, 0, ',', '.') . " untuk order {$record->invoice_number}?")
+                    ->modalSubmitActionLabel('Ya, Konfirmasi')
+                    ->action(function ($record) {
+                        // Cek sudah dibayar
+                        if ($record->payment_status->value === 'paid') {
+                            Notification::make()
+                                ->warning()
+                                ->title('Pesanan ini sudah dibayar.')
+                                ->send();
+                            return;
+                        }
+
+                        // Simpan payment
+                        Payment::create([
+                            'order_id'        => $record->id,
+                            'payment_gateway' => 'manual',
+                            'payment_type'    => 'cash',
+                            'amount'          => $record->grand_total,
+                            'status'          => 'paid',
+                            'paid_at'         => now(),
+                        ]);
+
+                        // Update order
+                        $record->update([
+                            'payment_status' => 'paid',
+                            'paid_at'        => now(),
+                        ]);
+
+                        // Earn loyalty points
+                        app(LoyaltyService::class)->earnPoints($record->fresh());
+
+                        // Broadcast
+                        event(new \App\Events\OrderStatusUpdated($record->fresh()));
+
+                        Notification::make()
+                            ->success()
+                            ->title('Pembayaran dikonfirmasi!')
+                            ->body("Poin loyalty customer telah diperbarui.")
+                            ->send();
+                    }),
+
+                // ── Order Status Actions ─────────────────────────
                 Action::make('confirm')
                     ->label('Konfirmasi')
                     ->icon('heroicon-o-check-circle')

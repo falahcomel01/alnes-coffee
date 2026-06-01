@@ -33,7 +33,6 @@ class OrderController extends Controller
 
         try {
             $result = $this->orderService->createOrder($request->all());
-
             return $this->createdResponse(
                 data: $result,
                 message: 'Pesanan berhasil dibuat!'
@@ -45,7 +44,6 @@ class OrderController extends Controller
 
     public function show(string $invoice): JsonResponse
     {
-        /** @var Order|null $order */
         $order = $this->orderService->getOrderByInvoice($invoice);
 
         if (!$order) {
@@ -68,7 +66,7 @@ class OrderController extends Controller
                 'grand_total'    => $order->grand_total,
                 'notes'          => $order->notes,
                 'ordered_at'     => $order->ordered_at,
-                'items'          => $order->items->map(fn($item) => [
+                'items'          => $order->items->map(fn ($item) => [
                     'product_name'  => $item->product->name,
                     'product_image' => $item->product->image,
                     'qty'           => $item->qty,

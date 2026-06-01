@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Star, CalendarDays } from 'lucide-react'
 import { categoryApi, productApi, settingApi, bannerApi } from '@/api'
 import useCartStore from '@/store/cartStore'
 import useSettingStore from '@/store/settingStore'
@@ -39,8 +40,8 @@ function BannerSlider({ banners }) {
             {banner.image ? (
               <img src={banner.image} alt={banner.title}
                 className="w-full h-full object-cover"
-                loading={i === 0 ? 'eager' : 'lazy'}
-                fetchPriority={i === 0 ? 'high' : 'low'}
+                loading="eager"
+                fetchPriority={i === 0 ? 'high' : 'auto'}
                 width={800} height={360} />
             ) : (
               <div className="w-full h-full flex items-end p-5"
@@ -160,10 +161,28 @@ export default function MenuPage() {
             </div>
 
             <div className="flex items-center gap-2">
+
+              {/* Tombol Loyalty */}
+              <button onClick={() => navigate('/loyalty')}
+                className="w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-95"
+                style={{ background: '#FDF3E7', border: '1px solid #EDD9B8' }}
+                title="Loyalty Points">
+                <Star className="w-4 h-4" style={{ color: '#C8872A' }} fill="#C8872A" />
+              </button>
+
+              {/* Tombol Reservasi */}
+              <button onClick={() => navigate('/reservation')}
+                className="w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-95"
+                style={{ background: '#EDE8E0', border: '1px solid #D9D0C4' }}
+                title="Reservasi Meja">
+                <CalendarDays className="w-4 h-4" style={{ color: '#6B3F1F' }} />
+              </button>
+
               <LanguageSwitcher />
+
               <button onClick={() => { setShowSearch(s => !s); setSearchQuery('') }}
-                className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-                style={{ background: '#EDE8E0', color: '#6B3F1F' }}>
+                className="w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-95"
+                style={{ background: '#EDE8E0', border: '1px solid #D9D0C4', color: '#6B3F1F' }}>
                 {showSearch ? (
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

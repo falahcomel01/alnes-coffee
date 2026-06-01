@@ -6,6 +6,7 @@ use App\Models\Banner;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 
 class BannerObserver
 {
@@ -19,14 +20,15 @@ class BannerObserver
 
         try {
             $manager = new ImageManager(new Driver());
-            $image   = $manager->read($path);
+            $image   = $manager->decodePath($path);
 
             if ($image->width() > 1200) {
                 $image->scale(width: 1200);
             }
 
             $newPath = preg_replace('/\.(png|PNG|webp|WEBP)$/', '.jpg', $path);
-            $image->toJpeg(75)->save($newPath);
+            $encoded = $image->encode(new JpegEncoder(75));
+            $encoded->save($newPath);
 
             if ($path !== $newPath && file_exists($path)) {
                 unlink($path);

@@ -17,6 +17,7 @@ class OrderService
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly PromoRepositoryInterface $promoRepository,
         private readonly ProductService           $productService,
+        private readonly LoyaltyService           $loyaltyService,
     ) {}
 
     public function createOrder(array $data): array
@@ -63,10 +64,17 @@ class OrderService
             $serviceFee = $setting->service_fee;
             $grandTotal = $subtotal + $tax + $serviceFee - $discount;
 
+            // ── Auto register customer untuk loyalty ─────────────
+            $customer = $this->loyaltyService->findOrCreateCustomer(
+                phone: $data['customer_phone'],
+                name:  $data['customer_name'],
+            );
+
             $order = $this->orderRepository->create([
                 'invoice_number' => 'INV-' . strtoupper(Str::random(8)),
                 'table_id'       => $data['table_id'],
                 'promo_id'       => $promo?->id,
+                'customer_id'    => $customer->id,
                 'customer_name'  => $data['customer_name'],
                 'customer_phone' => $data['customer_phone'],
                 'order_type'     => $data['order_type'],

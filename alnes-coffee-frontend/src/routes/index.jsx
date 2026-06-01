@@ -7,6 +7,8 @@ import OrderStatusPage from '@/pages/OrderStatusPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 import KitchenPage from '@/pages/KitchenPage'
 import PaymentPage from '@/pages/PaymentPage'
+import LoyaltyPage from '@/pages/LoyaltyPage'
+import ReservationPage from '@/pages/ReservationPage'
 
 const router = createBrowserRouter([
   {
@@ -32,6 +34,8 @@ const router = createBrowserRouter([
         path: '/payment',
         element: <PaymentPage />,
       },
+      { path: '/loyalty', 
+        element: <LoyaltyPage /> }
     ],
   },
   {
@@ -42,6 +46,8 @@ const router = createBrowserRouter([
     path: '*',
     element: <NotFoundPage />,
   },
+  // tambahkan di dalam children MainLayout
+{ path: '/reservation', element: <ReservationPage /> }
 ])
 
 export default router

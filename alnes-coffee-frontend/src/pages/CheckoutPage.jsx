@@ -85,25 +85,28 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-[#FAF8F4]">
 
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-[#FAF8F4]/95 backdrop-blur-xl border-b border-[#EDE8E0] px-4 py-3.5 flex items-center gap-3">
-        <button onClick={() => navigate(-1)}
-          className="w-9 h-9 rounded-full bg-[#EDE8E0] flex items-center justify-center active:scale-95 transition-transform">
-          <svg className="w-4 h-4 text-[#1C1008]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <div>
-          <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: 17, color: '#1C1008', letterSpacing: '-0.01em' }}>
-            {t('checkout')}
-          </h1>
-          <p className="text-xs mt-0.5" style={{ color: '#8B7355' }}>
-            {items.length} {t('items')} · {formatPriceShort(grandTotal)}
-          </p>
+      {/* Header sticky — max-w centered */}
+      <div className="sticky top-0 z-40 bg-[#FAF8F4]/95 backdrop-blur-xl border-b border-[#EDE8E0]">
+        <div className="max-w-3xl mx-auto px-4 py-3.5 flex items-center gap-3">
+          <button onClick={() => navigate(-1)}
+            className="w-9 h-9 rounded-full bg-[#EDE8E0] flex items-center justify-center active:scale-95 transition-transform">
+            <svg className="w-4 h-4 text-[#1C1008]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div>
+            <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: 17, color: '#1C1008', letterSpacing: '-0.01em' }}>
+              {t('checkout')}
+            </h1>
+            <p className="text-xs mt-0.5" style={{ color: '#8B7355' }}>
+              {items.length} {t('items')} · {formatPriceShort(grandTotal)}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="px-4 py-5 space-y-3 pb-36">
+      {/* Content — max-w centered */}
+      <div className="max-w-3xl mx-auto px-4 py-5 space-y-3 pb-36">
 
         {/* Tipe pemesanan */}
         <div className="bg-white rounded-2xl p-4 border border-[#EDE8E0]">
@@ -116,7 +119,7 @@ export default function CheckoutPage() {
               { key: 'takeaway', labelKey: 'takeaway',  emoji: '🛍️' },
             ].map(opt => (
               <button key={opt.key} onClick={() => setForm(f => ({ ...f, order_type: opt.key }))}
-                className="flex items-center gap-2.5 px-3 py-3.5 rounded-xl border transition-all active:scale-95"
+                className="flex items-center gap-2.5 px-3 py-3.5 rounded-xl transition-all active:scale-95"
                 style={{
                   border: '1px solid',
                   borderColor: form.order_type === opt.key ? '#1C1008' : '#EDE8E0',
@@ -200,23 +203,16 @@ export default function CheckoutPage() {
             {t('promo_code')}
           </p>
           <div className="flex gap-2">
-            <input
-              value={promoCode}
-              onChange={e => setPromoCode(e.target.value.toUpperCase())}
-              placeholder={t('promo_placeholder')}
-              className="flex-1 outline-none"
+            <input value={promoCode} onChange={e => setPromoCode(e.target.value.toUpperCase())}
+              placeholder={t('promo_placeholder')} className="flex-1 outline-none"
               style={{ background: '#FAF8F4', border: '1px solid #EDE8E0', borderRadius: 12,
-                padding: '10px 14px', fontSize: 13, color: '#1C1008', letterSpacing: '0.05em' }}
-            />
-            <button onClick={handlePromo}
-              className="px-4 rounded-xl active:scale-95 transition-transform"
+                padding: '10px 14px', fontSize: 13, color: '#1C1008', letterSpacing: '0.05em' }} />
+            <button onClick={handlePromo} className="px-4 rounded-xl active:scale-95 transition-transform"
               style={{ background: '#1C1008', color: '#FAF2E6', fontSize: 13, fontWeight: 600 }}>
               {t('use')}
             </button>
           </div>
-          {promoError && (
-            <p style={{ fontSize: 11, color: '#ef4444', marginTop: 8 }}>✕ {promoError}</p>
-          )}
+          {promoError && <p style={{ fontSize: 11, color: '#ef4444', marginTop: 8 }}>✕ {promoError}</p>}
           {promoData && (
             <div className="flex items-center gap-2 mt-2 rounded-lg px-3 py-2"
               style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
@@ -265,7 +261,6 @@ export default function CheckoutPage() {
               </button>
             ))}
           </div>
-
           {form.payment_method === 'cash' && (
             <div className="mt-3 rounded-xl px-4 py-3" style={{ background: '#fffbeb', border: '1px solid #fde68a' }}>
               <p style={{ fontSize: 11, color: '#92400e' }}>💡 {t('cash_info')}</p>
@@ -278,7 +273,7 @@ export default function CheckoutPage() {
           )}
         </div>
 
-        {/* Rincian pembayaran */}
+        {/* Rincian */}
         <div className="bg-white rounded-2xl p-4 border border-[#EDE8E0]">
           <p style={{ fontSize: 10, fontWeight: 600, color: '#A0896E', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
             {t('payment_detail')}
@@ -317,32 +312,34 @@ export default function CheckoutPage() {
         )}
       </div>
 
-      {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-3 backdrop-blur-xl border-t border-[#EDE8E0]"
+      {/* Bottom CTA — max-w centered */}
+      <div className="fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t border-[#EDE8E0]"
         style={{ background: 'rgba(250,248,244,0.95)' }}>
-        <button onClick={handleSubmit} disabled={loading}
-          className="w-full py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-          style={{
-            background: loading ? '#5C4A35' : '#1C1008',
-            color: '#FAF2E6', fontSize: 14, fontWeight: 700,
-            boxShadow: '0 4px 20px rgba(28,16,8,0.25)',
-          }}>
-          {loading ? (
-            <>
-              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              <span>{t('processing')}</span>
-            </>
-          ) : (
-            <>
-              <span>{t('order_now')}</span>
-              <span style={{ opacity: 0.4 }}>·</span>
-              <span>{formatPriceShort(grandTotal)}</span>
-            </>
-          )}
-        </button>
+        <div className="max-w-3xl mx-auto px-4 pb-6 pt-3">
+          <button onClick={handleSubmit} disabled={loading}
+            className="w-full py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            style={{
+              background: loading ? '#5C4A35' : '#1C1008',
+              color: '#FAF2E6', fontSize: 14, fontWeight: 700,
+              boxShadow: '0 4px 20px rgba(28,16,8,0.25)',
+            }}>
+            {loading ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                <span>{t('processing')}</span>
+              </>
+            ) : (
+              <>
+                <span>{t('order_now')}</span>
+                <span style={{ opacity: 0.4 }}>·</span>
+                <span>{formatPriceShort(grandTotal)}</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   )
